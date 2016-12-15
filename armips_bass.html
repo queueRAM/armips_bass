@@ -1,0 +1,385 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>armips vs. bass syntax</title>
+<style type="text/css">
+<!--
+pre { white-space: pre-wrap; font-family: monospace; color: #D5DED5; }
+body { font-family: monospace; color: #D5DED5; background-color: #000000; }
+* { font-size: 1em; }
+.Todo { color: #ffffff; background-color: #ee7700; padding-bottom: 1px; font-weight: bold; }
+.Statement { color: #66d077; font-weight: bold; }
+.LineNr { color: #928c75; }
+.Type { color: #4093cc; font-weight: bold; }
+.Comment { color: #ff9922; }
+.Constant { color: #ff6050; }
+.PreProc { color: #bb88dd; }
+.Identifier { color: #eecc44; }
+.Heading { font-size: 1.5em; text-decoration: underline; }
+td { padding: 0 15px 0 15px; vertical-align: top; background-color: #222222; }
+-->
+</style>
+
+<script type='text/javascript'>
+<!--
+
+-->
+</script>
+</head>
+<body>
+
+<table>
+
+<tr><td colspan=2><span class="Heading" id="comments">Comments</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips comment</span>
+<span class="Comment">; armips comment</span>
+</pre></td>
+<td><pre>
+<span class="Comment">// bass comment</span>
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="constants">Numeric Constants</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips hex: $A, 0xA, 0Ah</span>
+<span class="Comment">// armips oct: 0o12, 12o</span>
+<span class="Comment">// armips bin: 1010b</span>
+<span class="Comment">// armips dec: everything else</span>
+<span class="Constant">$A5</span>, <span class="Constant">0xA5</span>, <span class="Constant">165</span>, <span class="Constant">10100101b</span>
+</pre></td>
+<td><pre>
+<span class="Comment">// bass hex: $A, 0xA</span>
+<span class="Comment">// bass oct: 0o12</span>
+<span class="Comment">// bass bin: %1010, 0b1010</span>
+<span class="Comment">// bass dec: everything else</span>
+<span class="Constant">$A5</span>, <span class="Constant">0xA5</span>, <span class="Constant">165</span>, <span class="Constant">0b10100101</span>
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="separator">Statement Separator</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips statement separator is "::"</span>
+<span class="Statement">nop</span> :: <span class="Statement">nop</span>
+</pre></td>
+<td><pre>
+<span class="Comment">// bass statement separator is ";"</span>
+<span class="Statement">nop</span> ; <span class="Statement">nop</span>
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="architectures">Architectures</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips, other: .gba, .nds, .3ds, .ps2, .psp, .psx</span>
+<span class="PreProc">.n64</span>
+<span class="PreProc">.rsp</span>
+</pre></td>
+<td><pre>
+<span class="Comment">// bass, other: nes, pce, snes.cpu, snes.smp, snes.gsu</span>
+<span class="Comment">//              gb.cpu, gg.cpu, sms.cpu, msx.cpu, msxtr.cpu</span>
+<span class="PreProc">arch</span> <span class="Special">n64.cpu</span>
+<span class="PreProc">arch</span> <span class="Special">n64.rdp</span>
+<span class="PreProc">arch</span> <span class="Special">n64.rsp</span>
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="insertion">Inserting code inside existing binary</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips: input file, output file, RAM address</span>
+<span class="PreProc">.open</span> <span class="Constant">&quot;ExistingFile.bin&quot;</span>, <span class="Constant">&quot;NewFile.bin&quot;</span>, <span class="Constant">0x80000000</span>
+</pre></td>
+<td><pre>
+<span class="Comment">// bass</span>
+<span class="PreProc">output</span> <span class="Constant">&quot;NewFile.bin&quot;</span>, <span class="PreProc">create</span>
+<span class="PreProc">origin</span> <span class="Constant">0x00</span>
+<span class="PreProc">base</span> <span class="Constant">0x80000000</span>
+<span class="PreProc">insert</span> <span class="Constant">&quot;ExistingFile.bin&quot;</span>
+<span class="PreProc">origin</span> <span class="Constant">0x00</span>
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="addressing">Addressing</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips
+<span class="PreProc">.org</span> <span class="Constant">0x80000000</span>
+<span class="PreProc">.orga</span> <span class="Constant">0x200</span> <span class="Comment">// also advances pointer to 0x80000200</span>
+</pre></td>
+<td><pre>
+<span class="Comment">// bass</span>
+<span class="PreProc">origin</span> <span class="Constant">0x00</span>
+<span class="PreProc">base</span> <span class="Constant">0x80000000</span>
+<span class="PreProc">origin</span> <span class="Constant">0x200</span>
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="alignment">Alignment</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips</span>
+<span class="PreProc">.align</span> <span class="Constant">4</span>
+</pre></td>
+<td><pre>
+<span class="Comment">// bass: declare macro</span>
+<span class="PreProc">macro</span> <span class="Identifier">align</span>(size) {
+   <span class="PreProc">while</span> (<span class="Identifier">pc</span>() % <span class="Identifier">{size}</span>) {
+      <span class="PreProc">db</span> <span class="Constant">0</span>
+   }
+}
+<span class="Identifier">align</span>(<span class="Constant">4</span>)
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="labels">Labels</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips</span>
+<span class="Identifier">GlobalLabel:</span>
+<span class="Comment">// "@@" local label only valid until next global</span>
+<span class="Identifier">@@LocalLabel:</span>
+<span class="Comment">// "@" static label only valid in current file</span>
+<span class="Identifier">@StaticLabel:</span>
+</pre></td>
+<td><pre>
+<span class="Comment">// bass</span>
+<span class="Identifier">GlobalLabel:</span>
+<span class="Comment">// anonymous labels</span>
+<span class="Comment">// -: previous '-'</span>
+<span class="Comment">// --: second to previous '-'</span>
+<span class="Comment">// +: next '+'</span>
+<span class="Comment">// ++: second to next '+'</span>
+<span class="Identifier">-</span>; <span class="Statement">bne</span> <span class="Type">a0</span>, <span class="Type">a1</span>, <span class="Identifier">++</span>  <span class="Comment">// A: go to D</span>
+<span class="Identifier">-</span>; <span class="Statement">bne</span> <span class="Type">a1</span>, <span class="Type">a2</span>, <span class="Identifier">+</span>   <span class="Comment">// B: go to C</span>
+<span class="Identifier">+</span>; <span class="Statement">bne</span> <span class="Type">a2</span>, <span class="Type">a3</span>, <span class="Identifier">-</span>   <span class="Comment">// C: go to B</span>
+<span class="Identifier">+</span>; <span class="Statement">bne</span> <span class="Type">a3</span>, <span class="Type">t0</span>, <span class="Identifier">--</span>  <span class="Comment">// D: go to A</span>
+</span>
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="functions">Built-in Functions</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips version encoded as int</span>
+<span class="Identifier">version</span>()
+<span class="Comment">// string &quot;big&quot; or &quot;little&quot;</span>
+<span class="Identifier">endianness</span>()
+<span class="Comment">// output filename</span>
+<span class="Identifier">outputname</span>()
+<span class="Comment">// current virtual address</span>
+<span class="Identifier">org</span>()
+<span class="Comment">// current physical address</span>
+<span class="Identifier">orga</span>()
+<span class="Comment">// headersize (displacement of virtual address against physical address)</span>
+<span class="Identifier">headersize</span>()
+<span class="Comment">// 1: file exists, 0 doesn't</span>
+<span class="Identifier">fileexists</span>(file)
+<span class="Comment">// size of &quot;file&quot; in bytes</span>
+<span class="Identifier">filesize</span>(file)
+<span class="Comment">// convert int or float &quot;val&quot; to string</span>
+<span class="Identifier">tostring</span>(val)
+<span class="Comment">// convert int &quot;val&quot; to hex string</span>
+<span class="Identifier">tohex</span>(val, <span class="Type">optional</span> digits = <span class="Constant">8</span>)
+<span class="Comment">// cast float &quot;val&quot; to int</span>
+<span class="Identifier">int</span>(val)
+<span class="Comment">// cast int &quot;val&quot; to float</span>
+<span class="Identifier">float</span>(val)
+<span class="Comment">// fractional part of float &quot;val&quot;</span>
+<span class="Identifier">frac</span>(val)
+<span class="Comment">// absolute value of int or float &quot;val&quot;</span>
+<span class="Identifier">abs</span>(val)
+<span class="Comment">// size of &quot;str&quot; in number of characters</span>
+<span class="Identifier">strlen</span>(str)
+<span class="Comment">// substring of &quot;str&quot; from &quot;start&quot;, length &quot;count&quot;</span>
+<span class="Identifier">substr</span>(str, start, count)
+<span class="Comment">// 1: &quot;regex&quot; matched entire &quot;str&quot;, 0: didn't match</span>
+<span class="Identifier">regex_match</span>(str, regex)
+<span class="Comment">// 1: &quot;regex&quot; matched subsequence of &quot;str&quot;, 0: didn't match</span>
+<span class="Identifier">regex_search</span>(str, regex)
+<span class="Comment">// string of &quot;regex&quot; matched in &quot;str&quot;</span>
+<span class="Identifier">regex_extract</span>(str, regex, <span class="Type">optional</span> index = <span class="Constant">0</span>)
+<span class="Comment">// index of &quot;val&quot; in &quot;str&quot; starting at &quot;start&quot;, else -1</span>
+<span class="Identifier">find</span>(str, val, <span class="Type">optional</span> start = <span class="Constant">0</span>)
+<span class="Comment">// reverse find index of &quot;val&quot; in &quot;str&quot; from &quot;start&quot;, else -1</span>
+<span class="Identifier">rfind</span>(str, val, <span class="Type">optional</span> start = <span class="Constant">-1</span>)
+<span class="Comment">// read byte from &quot;file&quot; at position &quot;pos&quot;</span>
+<span class="Identifier">readbyte</span>(file, <span class="Type">optional</span> pos = <span class="Constant">0</span>)
+<span class="Comment">// read byte from &quot;file&quot; at position &quot;pos&quot;</span>
+<span class="Identifier">readu8</span>(file, <span class="Type">optional</span> pos = <span class="Constant">0</span>)
+<span class="Comment">// read u16 from &quot;file&quot; at position &quot;pos&quot;</span>
+<span class="Identifier">readu16</span>(file, <span class="Type">optional</span> pos = <span class="Constant">0</span>)
+<span class="Comment">// read u32 from &quot;file&quot; at position &quot;pos&quot;</span>
+<span class="Identifier">readu32</span>(file, <span class="Type">optional</span> pos = <span class="Constant">0</span>)
+<span class="Comment">// read u64 from &quot;file&quot; at position &quot;pos&quot;</span>
+<span class="Identifier">readu64</span>(file, <span class="Type">optional</span> pos = <span class="Constant">0</span>)
+<span class="Comment">// read ASCII string from file at &quot;start&quot; length &quot;len&quot;</span>
+<span class="Identifier">readascii</span>(file, <span class="Type">optional</span> start = <span class="Constant">0</span>, <span class="Type">optional</span> len = <span class="Constant">0</span>)
+<span class="Comment">// 1 if ARM, 0 otherwise</span>
+<span class="Identifier">isarm</span>()
+<span class="Comment">// 1 if Thumb, 0 otherwise</span>
+<span class="Identifier">isthumb</span>()
+</pre></td>
+<td><pre>
+<span class="Comment">// current origin (file offset)</span>
+<span class="Identifier">origin</span>()
+<span class="Comment">// current base (displacement of origin against pc)</span>
+<span class="Identifier">base</span>()
+<span class="Comment">// current program counter (virtual address)</span>
+<span class="Identifier">pc</span>()
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="constants">Constants</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips: constants defined with "equ" before using</span>
+<span class="Identifier">ConstantName</span> <span class="PreProc">equ</span> <span class="Constant">0x20</span>
+<span class="Comment">// similar to labels, "@@" constans only valid until next global label</span>
+<span class="Identifier">@@LocalConstant</span> <span class="PreProc">equ</span> <span class="Constant">0x24(sp)</span>
+<span class="Comment">// define labels are like constants, but don't have to be defined before using</span>
+<span class="PreProc">.definelabel</span> <span class="Identifier">LabelName</span>, <span class="Constant">0x80324000</span>
+</pre></td>
+<td><pre>
+<span class="Comment">// bass</span>
+<span class="Comment">// constants can be used before declaration, but may not be redeclared</span>
+<span class="PreProc">constant</span> <span class="Identifier">ConstantName</span>(<span class="Constant">0x20</span>)
+<span class="Comment">// variables must declaraded before used, but may be defined</span>
+<span class="PreProc">variable</span> <span class="Identifier">VariableName</span>(<span class="Constant">0x24</span>)
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="defines">Defines</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips: uses labels for defines</span>
+<span class="PreProc">.definelabel</span> <span class="Identifier">LabelName</span>, <span class="Constant">0x80324000</span>
+<span class="PreProc">.ifdef</span> <span class="Identifier">LabelName</span>
+  ...
+<span class="PreProc">.else</span>
+  ...
+<span class="PreProc">.endif</span>
+</pre></td>
+<td><pre>
+<span class="Comment">// bass</span>
+<span class="Comment">// 'define' used to substitute expressions</span>
+<span class="PreProc">define</span> <span class="Identifier">DefineName</span>(<span class="Constant">1</span> + <span class="Constant">2</span>)
+<span class="PreProc">if</span> !{<span class="PreProc">defined</span> <span class="Identifier">DefineName</span>} {
+  ...
+} <span class="PreProc">else</span> {
+  ...
+}
+<span class="Comment">// 'evaluate' used to evluate expression as integer value</span>
+<span class="PreProc">evaluate</span> <span class="Identifier">EvaluateName</span>(<span class="Identifier">{DefineName}</span> + <span class="Constant">2</span>)
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="macros">Macros</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips: user defined macros</span>
+<span class="PreProc">.macro</span> <span class="Identifier">MacroName</span>, param0, param1, param2
+  <span class="PreProc">.if</span> param0 == <span class="Constant">2</span>
+    <span class="PreProc">.dh</span> param1, param2
+  <span class="PreProc">.else</span>
+    <span class="PreProc">.dw</span> param1, param2
+  <span class="PreProc">.endif</span>
+<span class="PreProc">.endmacro</span>
+<span class="Comment">// macro invocation</span>
+<span class="Identifier">MacroName</span>, <span class="Constant">2</span>, <span class="Constant">0x100</span>, <span class="Constant">0x200</span> <span class="Comment">// .dh 0x100, 0x200</span>
+<span class="Identifier">MacroName</span>, <span class="Constant">4</span>, <span class="Constant">0x100</span>, <span class="Constant">0x200</span> <span class="Comment">// .dw 0x100, 0x200</span>
+</pre></td>
+<td><pre>
+<span class="Comment">// bass</span>
+<span class="PreProc">macro</span> <span class="Identifier">MacroName</span>(param0, param1, param2) {
+  <span class="PreProc">if</span> <span class="Identifier">{param0}</span> == <span class="Constant">2</span> {
+    <span class="PreProc">dh</span> <span class="Identifier">{param1}</span>, <span class="Identifier">{param2}</span>
+  } <span class="PreProc">else</span> {
+    <span class="PreProc">dw</span> <span class="Identifier">{param1}</span>, <span class="Identifier">{param2}</span>
+  }
+}
+<span class="Comment">// macro invocation</span>
+<span class="Identifier">MacroName</span>(<span class="Constant">2</span>, <span class="Constant">0x100</span>, <span class="Constant">0x200</span>) <span class="Comment">// dh 0x100, 0x200</span>
+<span class="Identifier">MacroName</span>(<span class="Constant">4</span>, <span class="Constant">0x100</span>, <span class="Constant">0x200</span>) <span class="Comment">// dw 0x100, 0x200</span>
+<span class="Comment">// supports recursion</span>
+<span class="PreProc">macro</span> <span class="Identifier">Fibonacci</span>(prev, next, count) {
+  <span class="PreProc">db</span> <span class="Identifier">{next}</span>
+  <span class="PreProc">if</span> <span class="Identifier">{count}</span> != <span class="Constant">1</span> {
+    Fibonacci(<span class="Identifier">{next}</span>, <span class="Identifier">{prev}</span> + <span class="Identifier">{next}</span>, <span class="Identifier">{count}</span> - <span class="Constant">1</span>)
+  }
+}
+<span class="Comment">// evaluates to first 10 values of Fibonacci sequence as bytes</span>
+<span class="Identifier">Fibonacci</span>(<span class="Constant">0</span>, <span class="Constant">1</span>, <span class="Constant">10</span>) <span class="Comment">// db 1, 1, 2, 3, 5, 8, 13, 21, 34, 55
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="areas">Areas</span><br>It is often desirable to ensure inserted codes does not exceed a range.</td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips: .area length[, fill]</span>
+<span class="PreProc">.area</span> <span class="Constant">0x10</span>
+  <span class="Statement">nop</span> :: <span class="Statement">nop</span> :: <span class="Statement">nop</span> :: <span class="Statement">nop</span>
+<span class="PreProc">.endarea</span>
+<span class="Comment">// armips: with virtual addresses</span>
+<span class="PreProc">.org</span> <span class="Constant">0x80040000</span>
+<span class="PreProc">.area</span> <span class="Constant">0x80040020</span> - <span class="Identifier">.</span>
+  <span class="Statement">nop</span> :: <span class="Statement">nop</span> :: <span class="Statement">nop</span> :: <span class="Statement">nop</span>
+<span class="PreProc">.endarea</span>
+</pre></td>
+<td><pre>
+<span class="Comment">// bass: use functions to implement areas</span>
+<span class="Identifier">Example</span>:
+  <span class="Statement">nop</span> ; <span class="Statement">nop</span> ; <span class="Statement">nop</span> ; <span class="Statement">nop</span>
+<span class="PreProc">if</span> <span class="Identifier">pc</span>() &gt; <span class="Constant">0x80040020</span> {
+   <span class="PreProc">error</span> <span class="Constant">&quot;pc() exceeds 0x80040020&quot;</span>
+}
+<span class="Comment">// optionally fill remaining of area</span>
+<span class="PreProc">fill</span> <span class="Constant">0x80040020</span> - <span class="Identifier">pc</span>()
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="messages">Messages</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips</span>
+<span class="PreProc">.warning</span> <span class="Constant">&quot;Message&quot;</span>
+<span class="PreProc">.error</span> <span class="Constant">&quot;Message&quot;</span>
+<span class="PreProc">.notice</span> <span class="Constant">&quot;Message&quot;</span>
+</pre></td>
+<td><pre>
+<span class="Comment">// bass</span>
+<span class="PreProc">warning</span> <span class="Constant">&quot;Message&quot;</span>
+<span class="PreProc">error</span> <span class="Constant">&quot;Message&quot;</span>
+<span class="PreProc">notice</span> <span class="Constant">&quot;Message&quot;</span>
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="strings">String Mapping</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// armips: separate table file</span>
+<span class="PreProc">.loadtable</span> <span class="Constant">&quot;strings.tbl&quot;</span>
+<span class="PreProc">.db</span> <span class="Constant">&quot;String without mapping&quot;</span>
+<span class="PreProc">.string</span> <span class="Constant">&quot;String with mapping&quot;</span>
+strings.tbl:
+00=a
+01=b
+02=c
+03=d
+04=e
+05=f
+</pre></td>
+<td><pre>
+<span class="Comment">// bass: mapping in asm, supports ranges</span>
+<span class="PreProc">map</span> <span class="Constant">'a'</span>, <span class="Constant">0</span>, <span class="Constant">10</span>
+<span class="PreProc">db</span> <span class="Constant">&quot;String with mapping&quot;</span>
+</pre></td>
+</tr>
+
+</table>
+</body>
+</html>
