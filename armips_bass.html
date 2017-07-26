@@ -110,8 +110,12 @@ td { padding: 0 15px 0 15px; vertical-align: top; background-color: #222222; }
 <tr>
 <td><pre>
 <span class="Comment">// armips
+<span class="Comment">// .headersize set displacement of file position address in memory</span>
+<span class="PreProc">.headersize</span> <span class="Constant">0x80245000</span>
+<span class="Comment">// .org sets the memory address, automatically converting file offset</span>
 <span class="PreProc">.org</span> <span class="Constant">0x80000000</span>
-<span class="PreProc">.orga</span> <span class="Constant">0x200</span> <span class="Comment">// also advances pointer to 0x80000200</span>
+<span class="Comment">// .orga directly sets the absolute file offset</span>
+<span class="PreProc">.orga</span> <span class="Constant">0x200</span>
 </pre></td>
 <td><pre>
 <span class="Comment">// bass</span>
@@ -187,6 +191,8 @@ td { padding: 0 15px 0 15px; vertical-align: top; background-color: #222222; }
 <span class="Identifier">tostring</span>(val)
 <span class="Comment">// convert int &quot;val&quot; to hex string</span>
 <span class="Identifier">tohex</span>(val, <span class="Type">optional</span> digits = <span class="Constant">8</span>)
+<span class="Comment">// float &quot;val&quot; rounded to nearest int</span>
+<span class="Identifier">round</span>(val)
 <span class="Comment">// cast float &quot;val&quot; to int</span>
 <span class="Identifier">int</span>(val)
 <span class="Comment">// cast int &quot;val&quot; to float</span>
@@ -209,16 +215,24 @@ td { padding: 0 15px 0 15px; vertical-align: top; background-color: #222222; }
 <span class="Identifier">find</span>(str, val, <span class="Type">optional</span> start = <span class="Constant">0</span>)
 <span class="Comment">// reverse find index of &quot;val&quot; in &quot;str&quot; from &quot;start&quot;, else -1</span>
 <span class="Identifier">rfind</span>(str, val, <span class="Type">optional</span> start = <span class="Constant">-1</span>)
-<span class="Comment">// read byte from &quot;file&quot; at position &quot;pos&quot;</span>
+<span class="Comment">// read unsigned 8-bit value from &quot;file&quot; at position &quot;pos&quot;</span>
 <span class="Identifier">readbyte</span>(file, <span class="Type">optional</span> pos = <span class="Constant">0</span>)
-<span class="Comment">// read byte from &quot;file&quot; at position &quot;pos&quot;</span>
+<span class="Comment">// read unsigned 8-bit value from &quot;file&quot; at position &quot;pos&quot;</span>
 <span class="Identifier">readu8</span>(file, <span class="Type">optional</span> pos = <span class="Constant">0</span>)
-<span class="Comment">// read u16 from &quot;file&quot; at position &quot;pos&quot;</span>
+<span class="Comment">// read unsigned 16-bit value from &quot;file&quot; at position &quot;pos&quot;</span>
 <span class="Identifier">readu16</span>(file, <span class="Type">optional</span> pos = <span class="Constant">0</span>)
-<span class="Comment">// read u32 from &quot;file&quot; at position &quot;pos&quot;</span>
+<span class="Comment">// read unsigned 32-bit value from &quot;file&quot; at position &quot;pos&quot;</span>
 <span class="Identifier">readu32</span>(file, <span class="Type">optional</span> pos = <span class="Constant">0</span>)
-<span class="Comment">// read u64 from &quot;file&quot; at position &quot;pos&quot;</span>
+<span class="Comment">// read unsigned 64-bit value from &quot;file&quot; at position &quot;pos&quot;</span>
 <span class="Identifier">readu64</span>(file, <span class="Type">optional</span> pos = <span class="Constant">0</span>)
+<span class="Comment">// read signed 8-bit value from &quot;file&quot; at position &quot;pos&quot;</span>
+<span class="Identifier">reads8</span>(file, <span class="Type">optional</span> pos = <span class="Constant">0</span>)
+<span class="Comment">// read signed 16-bit value from &quot;file&quot; at position &quot;pos&quot;</span>
+<span class="Identifier">reads16</span>(file, <span class="Type">optional</span> pos = <span class="Constant">0</span>)
+<span class="Comment">// read signed 32-bit value from &quot;file&quot; at position &quot;pos&quot;</span>
+<span class="Identifier">reads32</span>(file, <span class="Type">optional</span> pos = <span class="Constant">0</span>)
+<span class="Comment">// read signed 64-bit value from &quot;file&quot; at position &quot;pos&quot;</span>
+<span class="Identifier">reads64</span>(file, <span class="Type">optional</span> pos = <span class="Constant">0</span>)
 <span class="Comment">// read ASCII string from file at &quot;start&quot; length &quot;len&quot;</span>
 <span class="Identifier">readascii</span>(file, <span class="Type">optional</span> start = <span class="Constant">0</span>, <span class="Type">optional</span> len = <span class="Constant">0</span>)
 <span class="Comment">// 1 if ARM, 0 otherwise</span>
@@ -388,6 +402,32 @@ strings.tbl:
 <span class="Comment">// bass: mapping in asm, supports ranges</span>
 <span class="PreProc">map</span> <span class="Constant">'a'</span>, <span class="Constant">0</span>, <span class="Constant">10</span>
 <span class="PreProc">db</span> <span class="Constant">&quot;String with mapping&quot;</span>
+</pre></td>
+</tr>
+
+<tr><td colspan=2><span class="Heading" id="strings">ELF Linking</span></td></tr>
+<tr>
+<td><pre>
+<span class="Comment">// compile C function into ELF object file</span>
+<span class="Comment">// with external refs in asm</span>
+<span class="Comment">// gcc -mtune=vr4300 -march=vr4300 -G 0 -mabi=32 -c hello_c.c -o hello_c.o</span>
+<span class="Type">extern</span> <span class="Type">void</span> <span class="Identifier">FunctionAsm</span>(<span class="Type">unsigned</span> <span class="Type">int</span> x, <span class="Type">unsigned</span> <span class="Type">int</span> y);
+<span class="Type">void</span> <span class="Identifier">FunctionC</span>(<span class="Type">void</span>)
+{
+   <span class="Identifier">FunctionAsm</span>(10, 16);
+}
+
+<span class="Comment">// armips: link ELF files into asm</span>
+<span class="Comment">// void FunctionAsm(unsigned int x, unsigned int y);</span>
+<span class="PreProc">.definelabel</span> <span class="Identifier">FunctionAsm</span><span class="Statement">,</span> <span class="Constant">0x802D66C0</span>
+<span class="Comment">// insert ELF object routine</span>
+<span class="PreProc">.org</span> <span class="Constant">0x80246050</span>
+<span class="PreProc">.importobj</span> <span class="Constant">&quot;hello_c.o&quot;</span>
+<span class="Comment">// call C function in hello_c.o from asm</span>
+<span class="PreProc">.org</span> <span class="Constant">0x80246000</span>
+<span class="PreProc">jal</span> <span class="Identifier">FunctionC</span>
+<td><pre>
+<span class="Comment">// bass: ELF linking unsupported</span>
 </pre></td>
 </tr>
 
