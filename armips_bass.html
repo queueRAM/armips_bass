@@ -292,8 +292,17 @@ td { padding: 0 15px 0 15px; vertical-align: top; background-color: #222222; }
   <span class="PreProc">.endif</span>
 <span class="PreProc">.endmacro</span>
 <span class="Comment">// macro invocation</span>
-<span class="Identifier">MacroName</span>, <span class="Constant">2</span>, <span class="Constant">0x100</span>, <span class="Constant">0x200</span> <span class="Comment">// .dh 0x100, 0x200</span>
-<span class="Identifier">MacroName</span>, <span class="Constant">4</span>, <span class="Constant">0x100</span>, <span class="Constant">0x200</span> <span class="Comment">// .dw 0x100, 0x200</span>
+<span class="Identifier">MacroName</span> <span class="Constant">2</span>, <span class="Constant">0x100</span>, <span class="Constant">0x200</span> <span class="Comment">// .dh 0x100, 0x200</span>
+<span class="Identifier">MacroName</span> <span class="Constant">4</span>, <span class="Constant">0x100</span>, <span class="Constant">0x200</span> <span class="Comment">// .dw 0x100, 0x200</span>
+<span class="Comment">// supports recursion</span>
+<span class="PreProc">.macro</span> Fibonacci<span class="Statement">,</span> cur<span class="Statement">,</span> next<span class="Statement">,</span> count
+  <span class="PreProc">.db</span> cur
+  <span class="PreProc">.if</span> count <span class="Statement">!=</span> <span class="Constant">1</span>
+    Fibonacci next<span class="Statement">,</span> cur <span class="Statement">+</span> next<span class="Statement">,</span> count <span class="Statement">-</span> <span class="Constant">1</span>
+  <span class="PreProc">.endif</span>
+<span class="PreProc">.endmacro</span>
+<span class="Comment">// evaluates to first 10 values of Fibonacci sequence as bytes</span>
+Fibonacci <span class="Constant">0</span><span class="Statement">,</span> <span class="Constant">1</span><span class="Statement">,</span> <span class="Constant">10</span> <span class="Comment">// .db 0, 1, 1, 2, 3, 5, 8, 13, 21, 34</span>
 </pre></td>
 <td><pre>
 <span class="Comment">// bass</span>
@@ -308,14 +317,14 @@ td { padding: 0 15px 0 15px; vertical-align: top; background-color: #222222; }
 <span class="Identifier">MacroName</span>(<span class="Constant">2</span>, <span class="Constant">0x100</span>, <span class="Constant">0x200</span>) <span class="Comment">// dh 0x100, 0x200</span>
 <span class="Identifier">MacroName</span>(<span class="Constant">4</span>, <span class="Constant">0x100</span>, <span class="Constant">0x200</span>) <span class="Comment">// dw 0x100, 0x200</span>
 <span class="Comment">// supports recursion</span>
-<span class="PreProc">macro</span> <span class="Identifier">Fibonacci</span>(prev, next, count) {
-  <span class="PreProc">db</span> <span class="Identifier">{next}</span>
+<span class="PreProc">macro</span> <span class="Identifier">Fibonacci</span>(cur, next, count) {
+  <span class="PreProc">db</span> <span class="Identifier">{cur}</span>
   <span class="PreProc">if</span> <span class="Identifier">{count}</span> != <span class="Constant">1</span> {
-    Fibonacci(<span class="Identifier">{next}</span>, <span class="Identifier">{prev}</span> + <span class="Identifier">{next}</span>, <span class="Identifier">{count}</span> - <span class="Constant">1</span>)
+    Fibonacci(<span class="Identifier">{next}</span>, <span class="Identifier">{cur}</span> + <span class="Identifier">{next}</span>, <span class="Identifier">{count}</span> - <span class="Constant">1</span>)
   }
 }
 <span class="Comment">// evaluates to first 10 values of Fibonacci sequence as bytes</span>
-<span class="Identifier">Fibonacci</span>(<span class="Constant">0</span>, <span class="Constant">1</span>, <span class="Constant">10</span>) <span class="Comment">// db 1, 1, 2, 3, 5, 8, 13, 21, 34, 55
+<span class="Identifier">Fibonacci</span>(<span class="Constant">0</span>, <span class="Constant">1</span>, <span class="Constant">10</span>) <span class="Comment">// db 0, 1, 1, 2, 3, 5, 8, 13, 21, 34
 </pre></td>
 </tr>
 
